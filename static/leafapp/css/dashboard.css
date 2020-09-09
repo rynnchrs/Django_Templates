@@ -1,0 +1,162 @@
+
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+
+
+body, h1, h2, h3, h4, h5, h6, p, text {
+    font-family: 'Roboto Condensed', sans-serif !important;
+}
+
+[class^="col-"] {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.wrapper {
+    background-color: #ECF0F5 !important;
+}
+
+.content-wrapper {
+    min-height: 0 !important;
+}
+
+.content {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.product-name {
+    color: #F6F6F6;
+    font-size: 22px;
+    font-weight: bold;
+
+    position: relative;
+    top: 10px;
+    margin-right: 15px;
+}
+
+.navbar .navbar-nav {
+    font-size: 16px;
+}
+
+.navbar .select2 {
+    margin-top: 7px;
+}
+
+.breadcrumb {
+    margin-right: 25px;
+}
+
+#status-text {
+    font-size: 16px;
+}
+
+.content-header > .breadcrumb > li + li::before {
+    content: '';
+}
+
+.breadcrumb li a {
+    color: #333;
+}
+
+.box-body {
+    width: 100%;
+    height: 100%;
+}
+
+.box-loading {
+    padding: 10px 0px;
+    text-align: center;
+}
+
+.box-title, .btn-box-tool {
+    font-size: 22px !important;
+}
+
+.btn-box-tool {
+    padding-top: 2px;
+}
+
+.box-tools .dropdown-menu, .box-tools .dropdown-menu input, .box-tools .dropdown-menu select {
+    font-size: 16px;
+}
+
+.status-online {
+    color: #00A65A;
+}
+
+.status-offline {
+    color: #333333;
+}
+
+.status-fault {
+    color: #DD4B39;
+}
+
+.status-warning {
+    color: #F39C12;
+}
+
+.content-wrapper.container-fluid {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.dropdown-menu {
+    padding: 15px;
+}
+
+@media (max-width: 480px) {
+
+    .navbar-custom-menu {
+        display: block;
+        float: left !important;
+        position: relative !important;
+        right: 0px !important;
+    }
+}
+
+@media (max-width: 767px) {
+
+    .company-logo {
+        margin-left: 15px;
+        margin-right: 5px !important;
+    }
+
+    .product-name {
+        margin-right: 0px;
+    }
+
+    .breadcrumb {
+        margin-right: 0px !important;
+        margin-bottom: 5px !important;
+    }
+}
+
+@media (min-width: 992px) {
+
+    .box {
+        min-height: 380px;
+        max-height: 380px;
+    }
+}
+
+:root {
+    --product-color: {% block theme_color_dashboard %}#04BAEE{% endblock %};
+}
+
+.skin-blue .main-header .navbar, .select2-container--default, .select2-results__option--highlighted[aria-selected], .Zebra_DatePicker td.dp_selected {
+    background-color: var(--product-color) !important;
+}
+
+.breadcrumb li a:hover {
+    color: var(--product-color);
+}
+
+.box.box-default {
+    border-top-color: var(--product-color) !important;
+}
+
+.company-logo {
+    padding-top: 8px;
+    margin-right: 15px;
+}

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static%}
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <title>Dashboard</title>
+
+    {# CSS #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.8/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.8/css/skins/skin-blue.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.8/c3.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Zebra_datepicker/1.9.4/css/bootstrap.min.css">
+    <link href="{% static 'leafapp/css/dashboard.css' %}" rel="stylesheet">
+
+        {# Dashboard theme color #}
+    <style>
+        :root {
+            --product-color: {% block theme_color_dashboard %}#7abecc{% endblock %};
+        }
+
+        .skin-blue .main-header .navbar, .select2-container--default, .select2-results__option--highlighted[aria-selected], .Zebra_DatePicker td.dp_selected {
+            background-color: var(--product-color) !important;
+        }
+
+        .breadcrumb li a:hover {
+            color: var(--product-color);
+        }
+
+        .box.box-default {
+            border-top-color: var(--product-color) !important;
+        }
+
+        .company-logo {
+            padding-top: 8px;
+            margin-right: 15px;
+        }
+
+        .my-custom-scrollbar {
+        position: relative;
+        height: 400px;
+        overflow: auto;
+        }
+        .table-wrapper-scroll-y {
+        display: block;
+        }
+    </style>
+    {# JS #}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.21/c3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Zebra_datepicker/1.9.4/javascript/zebra_datepicker.src.js"></script>
+    <script type="text/javascript" src="{% static 'leafapp/js/dashboard.js' %}"></script>
+    <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+
+
+</head>
+
+<body class="hold-transition skin-blue layout-top-nav">
+    <div class="wrapper">
+
+        {# Navigation bar #}
+        <header class="main-header">
+            <nav class="navbar navbar-static-top">
+                <div class="container-fluid">
+
+                    <div class="navbar-header">
+
+                        <span class="product-name"><h4>Classification and Detection of Nutritional Deficiencies in Coffee Plants using Image Processing and Convolutional Neural Network (CNN)</h4></span>
+                    </div>
+
+                    <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            {# Navigation bar links #}
+                            {% block navlinks %}
+                            {% endblock %}
+                        </ul>
+                    </div>
+
+                    <div class="navbar-custom-menu">
+
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="/" title="Home"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a>
+                            </li>
+                            <li>
+                                <a href="/description/" title="Description"><i class="fa fa-info fa-2x" aria-hidden="true"></i></a>
+                            </li>
+                            {% if user.is_superuser %}
+                            <li>
+                                <a href="/admin/" title="Admin"><i class="fa fa-users fa-2x" aria-hidden="true"></i></a>
+                            </li>
+                            {% endif %}
+
+                            <li id="logout">
+                                <a href="#" title="Sign out"><i class="fa fa-sign-out fa-2x" aria-hidden="true"></i></a>
+                                {% csrf_token %}
+                            </li>
+                        </ul>
+
+                    </div>
+
+                </div>
+            </nav>
+        </header>
+        <br>
+        <br>
+        <br>
+        <div class="text-center">
+            <h3 class="box-title">User's Manual</h3>
+        </div>
+        <br>
+        <h4><strong>General Information</strong></h4>
+        <br>
+        <p>The study entitled “Classification and Detection of Nutritional Deficiencies in Coffee Plants using Image Processing and Convolutional Neural Network (CNN)” was conducted to develop a prototype that would integrate different hardware and software components, image processing techniques and Convolutional Neural Network (CNN) to detect nutritional deficiencies in coffee leave. The design and development of this prototype is to introduce another way to nutritional leaf detection that could help agriculturists and coffee farmers.
+
+            This user’s manual is created to guide users in the utilization of the prototype. It includes two parts; one is the prototype/device and second is the system or web page view.
+        </p>
+        <br>
+        <br>
+        <h4><strong>The Prototype</strong></h4>
+        <br>
+        <p>1.	The prototype should be connected to a power supply with 220 volts.</p>
+        <p>2.	Wait until the prototype loads and connect it to the internet.</p>
+        <div class="text-center">
+            <img src="{%static '/images/manual1.png' %}"  style="width: 50%;" />
+            <p>Fig.1 Prototype Internet Connection</p>
+            <p><i>Note: It is important to connect the prototype in the Internet to send data to the web server.</i></p>
+        </div>
+        <br>
+        <p>3.	Place the coffee leave inside the prototype. Adjust the cameras if needed.</p>
+        <div class="text-center">
+            <img src="{%static '/images/manual2.png' %}"  style="width: 50%;" />
+            <p>Fig. 2 Placing the leave inside the prototype</p>
+            <p>You need to make sure that you can capture the whole leave. You can check the screen located at the top view of the prototype.</p>
+        </div>
+        <br>
+        <p>4.	Once ready to capture the image, you can see four buttons in the screen: Capture, Process, Upload Leaf and Upload Temp. You need to specify the location and coffee variety of the leave using the drop-down arrow. After that, you can click the Capture button to take the picture of leave.</p>
+        <div class="text-center">
+            <img src="{%static '/images/manual3.png' %}"  style="width: 50%;" />
+            <p>Fig. 3 Screen display</p>
+        </div>
+        <br>
+        <p>5.	To display the predicted nutritional deficiency, you need to press the Process button.</p>
+        <p>6.	To send the data of the leave, an Upload Leaf button should be pressed. The predicted nutritional deficiency will be displayed together with the Fertilizer Recommendations.</p>
+        <p>7.	The temperature of the area will be automatically display in the screen. You need to press the Upload Temp button to send the temperature readings in the web server.</p>
+        <p>8.	You can see the sent data of predicted nutritional deficiency and temperature using any web browser.</p>
+        <br>
+        <br>
+        <h4><strong>The Webpage</strong></h4>
+        <h4>User/Admin View</h4>
+        <br>
+        <p>1.	You need to open a web browser.</p>
+        <p>2.	Go to http://coffeedef.pythonanywhere.com to log-in in the system.</p>
+        <p>3.	If you do not have account yet, you can sign up.</p>
+        <div class="text-center">
+            <img src="{%static '/images/manual4.png' %}"  style="width: 30%;" />
+            <p>Fig. 4 Sign up page</p>
+        </div>
+        <br>
+        <p>4.   If you have your account already, you can now log-in using your username and password.</p>
+        <div class="text-center">
+            <img src="{%static '/images/manual5.png' %}"  style="width: 30%;" />
+            <p>Appendix Fig. 5 Log-in page</p>
+        </div>
+        <br>
+        <p>5.	Once log-in, you will be prompted to the web page.</p>
+        <div class="text-center">
+            <img src="{%static '/images/manual6.png' %}"  style="width: 50%;" />
+            <p>Appendix Fig. 6 System’s view</p>
+        </div>
+        <br>
+        <p>In this part, you can now view the deficiencies and temperature that were fetched from the prototype. You can view the data in Day, Month and Year format.</p>
+        <div class="text-center">
+            <img src="{%static '/images/manual7.png' %}"  style="width: 20%;" />
+            <p>Fig. 7 Viewing data by mode</p>
+        </div>
+        <br>
+        <div class="text-center">
+            <img src="{%static '/images/manual8.png' %}"  style="width: 50%;" />
+            <p>Fig. 8 Temperature reading</p>
+        </div>
+        <br>
+        <div class="text-center">
+            <img src="{%static '/images/manual9.png' %}"  style="width: 50%;" />
+            <p>Fig. 8 Temperature readingFig. 9 Coffee varieties with number of nutritional deficiencies</p>
+        </div>
+        <br>
+        <p>6.	You can sign-out, located at the upper right of the web page. </p>
+        <br>
+        <br>
+        <br>
+    </div>
+
+</body>
+
+</html>

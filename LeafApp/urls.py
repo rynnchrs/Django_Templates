@@ -1,0 +1,45 @@
+from django.urls import path
+
+from django.contrib.auth import views as auth_views
+
+from . import views
+
+urlpatterns = [
+    path('', views.home, name="home"),
+    path('description/', views.description, name="description"),
+    path('manual/', views.manual, name="manual"),
+    path('register/', views.registerPage, name="register"),
+    path('login/', views.loginPage, name="login"),
+    path('logout/', views.logoutUser, name="logout"),
+    path('save_data/', views.save_data, name="save_data"),
+    path('save_temp/', views.save_temp, name="save_temp"),
+    path('arabica_variety/', views.arabica_variety, name="arabica_variety"),
+    path('amadeo_arabica_variety/', views.amadeo_arabica_variety, name="amadeo_arabica_variety"),
+    path('indang_arabica_variety/', views.indang_arabica_variety, name="indang_arabica_variety"),
+    path('robusta_variety/', views.robusta_variety, name="robusta_variety"),
+    path('indang_robusta_variety/', views.indang_robusta_variety, name="indang_robusta_variety"),
+    path('liberica_variety/', views.liberica_variety, name="liberica_variety"),
+    path('indang_liberica_variety/', views.indang_liberica_variety, name="indang_liberica_variety"),
+    path('excela_variety/', views.excela_variety, name="excela_variety"),
+    path('amadeo_excela_variety/', views.amadeo_excela_variety, name="amadeo_excela_variety"),
+    path('amadeo_variety/', views.amadeo_variety, name="amadeo_variety"),
+    path('indang_variety/', views.indang_variety, name="indang_variety"),
+    path('table_arabica/', views.table_arabica, name="table_arabica"),
+    path('table_robusta/', views.table_robusta, name="table_robusta"),
+    path('table_liberica/', views.table_liberica, name="table_liberica"),
+    path('table_excela/', views.table_excela, name="table_excela"),
+    path('get_last_temperature_reading/', views.get_last_temperature_reading, name="get_last_temperature_reading"),
+    path('get_temperature_reading/', views.get_temperature_reading, name="get_temperature_reading"),
+    path('reset_password/',
+     auth_views.PasswordResetView.as_view(template_name="accounts/password_reset.html"),
+     name="reset_password"),
+    path('reset_password_sent/',
+        auth_views.PasswordResetDoneView.as_view(template_name="accounts/password_reset_sent.html"),
+        name="password_reset_done"),
+    path('reset/<uidb64>/<token>/',
+     auth_views.PasswordResetConfirmView.as_view(template_name="accounts/password_reset_form.html"),
+     name="password_reset_confirm"),
+    path('reset_password_complete/',
+        auth_views.PasswordResetCompleteView.as_view(template_name="accounts/password_reset_done.html"),
+        name="password_reset_complete"),
+]

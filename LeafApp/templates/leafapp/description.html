@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static%}
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <title>Dashboard</title>
+
+    {# CSS #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.8/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.8/css/skins/skin-blue.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.8/c3.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Zebra_datepicker/1.9.4/css/bootstrap.min.css">
+    <link href="{% static 'leafapp/css/dashboard.css' %}" rel="stylesheet">
+
+        {# Dashboard theme color #}
+    <style>
+        :root {
+            --product-color: {% block theme_color_dashboard %}#7abecc{% endblock %};
+        }
+
+        .skin-blue .main-header .navbar, .select2-container--default, .select2-results__option--highlighted[aria-selected], .Zebra_DatePicker td.dp_selected {
+            background-color: var(--product-color) !important;
+        }
+
+        .breadcrumb li a:hover {
+            color: var(--product-color);
+        }
+
+        .box.box-default {
+            border-top-color: var(--product-color) !important;
+        }
+
+        .company-logo {
+            padding-top: 8px;
+            margin-right: 15px;
+        }
+
+        .my-custom-scrollbar {
+        position: relative;
+        height: 400px;
+        overflow: auto;
+        }
+        .table-wrapper-scroll-y {
+        display: block;
+        }
+    </style>
+    {# JS #}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.21/c3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Zebra_datepicker/1.9.4/javascript/zebra_datepicker.src.js"></script>
+    <script type="text/javascript" src="{% static 'leafapp/js/dashboard.js' %}"></script>
+    <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+
+
+</head>
+
+<body class="hold-transition skin-blue layout-top-nav">
+    <div class="wrapper">
+
+        {# Navigation bar #}
+        <header class="main-header">
+            <nav class="navbar navbar-static-top">
+                <div class="container-fluid">
+
+                    <div class="navbar-header">
+
+                        <span class="product-name"><h4>Classification and Detection of Nutritional Deficiencies in Coffee Plants using
+                            Image Processing and Convolutional Neural Network (CNN)</h4></span>
+
+                    </div>
+
+                    <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            {# Navigation bar links #}
+                            {% block navlinks %}
+                            {% endblock %}
+                        </ul>
+                    </div>
+
+                    <div class="navbar-custom-menu">
+
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="/" title="Home"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a>
+                            </li>
+                            <li>
+                                <a href="/manual/" title="Manual"><i class="fa fa-barcode fa-2x" aria-hidden="true"></i></a>
+                            </li>
+                            {% if user.is_superuser %}
+                            <li>
+                                <a href="/admin/" title="Admin"><i class="fa fa-users fa-2x" aria-hidden="true"></i></a>
+                            </li>
+                            {% endif %}
+
+                            <li id="logout">
+                                <a href="#" title="Sign out"><i class="fa fa-sign-out fa-2x" aria-hidden="true"></i></a>
+                                {% csrf_token %}
+                            </li>
+                        </ul>
+
+                    </div>
+
+                </div>
+            </nav>
+        </header>
+        <br>
+        <br>
+        {# Main content #}
+        <div id="real-content" class="content-wrapper container-fluid">
+
+            <section class="content-header">
+
+                <ol class="breadcrumb">
+                </ol>
+
+            </section>
+
+            <section class="content">
+
+                <!-- Temperature Content-->
+                <div class="col-md-3">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Temperature</h3>
+                                <div class="box-tools pull-right"></div>
+                            </div>
+                            <div class="box-body">
+                                <br>
+                                <center><p>Standard Temperature Reading for Arabica:</p></center>
+                                <center><h3>15 - 24 °C</h3></center>
+                                <center><p>Standard Temperature Reading for Excelsa, Liberica and Robusta:</p></center>
+                                <center><h3>24 - 30 °C</h3></center>
+                                <center><p>Last Temperature Reading</p></center>
+                                <center><h1><span id="last-current-reading"></span> °C</h1></center>
+                                <center><p id="last-current-reading-date"></p></center>
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Table -->
+                <div class="col-md-9">
+                        <div class="box box-default">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table class="table table-bordered table-striped mb-0">
+                                  <thead>
+                                    <tr>
+                                        <th scope="col">Variety</th>
+                                        <th scope="col">Deficiency</th>
+                                        <th scope="col">Total</th>
+                                        <th scope="col">Amadeo</th>
+                                        <th scope="col">Indang</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <th scope="row">Arabica</th>
+                                        <td>Phosphorus</td>
+                                        <td id = 'total_aphos'>0</td>
+                                        <td id = 'amadeo_aphos'>0</td>
+                                        <td id = 'indang_aphos'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Arabica</th>
+                                        <td>Potassium</td>
+                                        <td id = 'total_apot'>0</td>
+                                        <td id = 'amadeo_apot'>0</td>
+                                        <td id = 'indang_apot'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"> </th>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Phosphorus</td>
+                                        <td id = 'total_rphos'>0</td>
+                                        <td>0</td>
+                                        <td id = 'indang_rphos'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Potassium</td>
+                                        <td id ='total_rpot'>0</td>
+                                        <td>0</td>
+                                        <td id = 'indang_rpot'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Calcium</td>
+                                        <td id = 'total_rcal'>0</td>
+                                        <td>0</td>
+                                        <td id = 'indang_rcal'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Boron</td>
+                                        <td id = 'total_rbo'>0</td>
+                                        <td>0</td>
+                                        <td id = 'indang_rbo'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Iron</td>
+                                        <td id ='total_rir'>0</td>
+                                        <td>0</td>
+                                        <td id = 'indang_rir'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Magnesium</td>
+                                        <td id = 'total_rmag'>0</td>
+                                        <td>0</td>
+                                        <td id = 'indang_rmag'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Nitrogen</td>
+                                        <td id = 'total_rnit'>0</td>
+                                        <td>0</td>
+                                        <td id = 'indang_rnit'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Zinc</td>
+                                        <td id = 'total_rzinc'>0</td>
+                                        <td>0</td>
+                                        <td id = 'indang_rzinc'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"> </th>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Liberica</th>
+                                        <td>Phosphorus</td>
+                                        <td id ='total_lphos'>0</td>
+                                        <td>0</td>
+                                        <td id = 'indang_lphos'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Liberica</th>
+                                        <td>Nitrogen</td>
+                                        <td id = 'total_lnit'>0</td>
+                                        <td>0</td>
+                                        <td id = 'indang_lnit'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"> </th>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td> </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Excelsa</th>
+                                        <td>Phosphorus</td>
+                                        <td id = 'total_ephos'>0</td>
+                                        <td id = 'amadeo_ephos'>0</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Excelsa</th>
+                                        <td>Potassium</td>
+                                        <td id = 'total_epot'>0</td>
+                                        <td id = 'amadeo_epot'>0</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Excelsa</th>
+                                        <td>Calcium</td>
+                                        <td id = 'total_ecal'>0</td>
+                                        <td id = 'amadeo_ecal'>0</td>
+                                        <td>0</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Temperature Graph-->
+                <div class="col-md-12">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Temperature &nbsp;&nbsp;<small id="graph-date-label"></small></h3>
+                                <div class="box-tools pull-right">
+                                    <div class="dropdown">
+                                        <button class="btn btn-box-tool dropdown-toggle" type="button" id="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <i class="fa fa-bars" aria-hidden="true"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu" aria-labelledby="dropdown">
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Date:</label>
+                                                    <input type="text" class="date form-control" id ="date">
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Mode:</label>
+                                                    <select id="mode" class="form-control">
+                                                        <option value="day">Day</option>
+                                                        <option value="month">Month</option>
+                                                        <option value="year">Year</option>
+                                                    </select>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="graph"></div>
+
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Total Arabica Graph-->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Total Arabica Deficiencies &nbsp;&nbsp;<small id="arabica-date-label"></small></h3>
+                                <div class="box-tools pull-right">
+                                    <div class="dropdown">
+                                        <button class="btn btn-box-tool dropdown-toggle" type="button" id="dropdown-arabica" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <i class="fa fa-bars" aria-hidden="true"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu" aria-labelledby="dropdown">
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Date:</label>
+                                                    <input type="text" class="date form-control" id="arabica-date">
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Mode:</label>
+                                                    <select id="arabica-mode" class="form-control">
+                                                        <option value="day">Day</option>
+                                                        <option value="month">Month</option>
+                                                        <option value="year">Year</option>
+                                                    </select>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="arabica-graph"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Total Arabica Table -->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table class="table table-bordered table-striped mb-0">
+                                  <thead>
+                                    <tr>
+                                        <th scope="col">Variety</th>
+                                        <th scope="col">Deficiency</th>
+                                        <th scope="col">Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <th scope="row">Arabica</th>
+                                        <td>Phosphorus</td>
+                                        <td id = 'total_aphos_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Arabica</th>
+                                        <td>Potassium</td>
+                                        <td id = 'total_apot_table'>0</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Amadeo Arabica Graph-->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Arabica Nutritional Deficiencies in Amadeo, Cavite &nbsp;&nbsp;<small id="amadeoarabica-date-label"></small></h3>
+                                <div class="box-tools pull-right">
+                                    <div class="dropdown">
+                                        <button class="btn btn-box-tool dropdown-toggle" type="button" id="dropdown-amadeoarabica" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <i class="fa fa-bars" aria-hidden="true"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu" aria-labelledby="dropdown">
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Date:</label>
+                                                    <input type="text" class="date form-control" id="amadeoarabica-date">
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Mode:</label>
+                                                    <select id="amadeoarabica-mode" class="form-control">
+                                                        <option value="day">Day</option>
+                                                        <option value="month">Month</option>
+                                                        <option value="year">Year</option>
+                                                    </select>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="amadeoarabica-graph"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Amadeo Arabica Table -->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table class="table table-bordered table-striped mb-0">
+                                  <thead>
+                                    <tr>
+                                        <th scope="col">Variety</th>
+                                        <th scope="col">Deficiency</th>
+                                        <th scope="col">Amadeo</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <th scope="row">Arabica</th>
+                                        <td>Phosphorus</td>
+                                        <td id = 'amadeo_aphos_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Arabica</th>
+                                        <td>Potassium</td>
+                                        <td id = 'amadeo_apot_table'>0</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Indang Arabica Graph-->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Arabica Nutritional Deficiencies in Indang, Cavite &nbsp;&nbsp;<small id="indangarabica-date-label"></small></h3>
+                                <div class="box-tools pull-right">
+                                    <div class="dropdown">
+                                        <button class="btn btn-box-tool dropdown-toggle" type="button" id="dropdown-indangarabica" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <i class="fa fa-bars" aria-hidden="true"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu" aria-labelledby="dropdown">
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Date:</label>
+                                                    <input type="text" class="date form-control" id="indangarabica-date">
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Mode:</label>
+                                                    <select id="indangarabica-mode" class="form-control">
+                                                        <option value="day">Day</option>
+                                                        <option value="month">Month</option>
+                                                        <option value="year">Year</option>
+                                                    </select>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="indangarabica-graph"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Indang Arabica Table -->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table class="table table-bordered table-striped mb-0">
+                                  <thead>
+                                    <tr>
+                                        <th scope="col">Variety</th>
+                                        <th scope="col">Deficiency</th>
+                                        <th scope="col">Indang</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <th scope="row">Arabica</th>
+                                        <td>Phosphorus</td>
+                                        <td id = 'indang_aphos_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Arabica</th>
+                                        <td>Potassium</td>
+                                        <td id = 'indang_apot_table'>0</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Total Robusta Graph-->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Total Robusta Deficiencies &nbsp;&nbsp;<small id="robusta-date-label"></small></h3>
+                                <div class="box-tools pull-right">
+                                    <div class="dropdown">
+                                        <button class="btn btn-box-tool dropdown-toggle" type="button" id="dropdown-robusta" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <i class="fa fa-bars" aria-hidden="true"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu" aria-labelledby="dropdown">
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Date:</label>
+                                                    <input type="text" class="date form-control" id="robusta-date">
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Mode:</label>
+                                                    <select id="robusta-mode" class="form-control">
+                                                        <option value="day">Day</option>
+                                                        <option value="month">Month</option>
+                                                        <option value="year">Year</option>
+                                                    </select>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="robusta-graph"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Total Robusta Table -->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table class="table table-bordered table-striped mb-0">
+                                  <thead>
+                                    <tr>
+                                        <th scope="col">Variety</th>
+                                        <th scope="col">Deficiency</th>
+                                        <th scope="col">Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Phosphorus</td>
+                                        <td id = 'total_rphos_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Potassium</td>
+                                        <td id ='total_rpot_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Calcium</td>
+                                        <td id = 'total_rcal_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Boron</td>
+                                        <td id = 'total_rbo_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Iron</td>
+                                        <td id ='total_rir_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Magnesium</td>
+                                        <td id = 'total_rmag_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Nitrogen</td>
+                                        <td id = 'total_rnit_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Zinc</td>
+                                        <td id = 'total_rzinc_table'>0</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Indang Robusta Graph-->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Robusta Nutritional Deficiencies in Indang, Cavite &nbsp;&nbsp;<small id="indangrobusta-date-label"></small></h3>
+                                <div class="box-tools pull-right">
+                                    <div class="dropdown">
+                                        <button class="btn btn-box-tool dropdown-toggle" type="button" id="dropdown-indangrobusta" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <i class="fa fa-bars" aria-hidden="true"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu" aria-labelledby="dropdown">
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Date:</label>
+                                                    <input type="text" class="date form-control" id="indangrobusta-date">
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Mode:</label>
+                                                    <select id="indangrobusta-mode" class="form-control">
+                                                        <option value="day">Day</option>
+                                                        <option value="month">Month</option>
+                                                        <option value="year">Year</option>
+                                                    </select>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="indangrobusta-graph"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Indang Robusta Table -->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table class="table table-bordered table-striped mb-0">
+                                  <thead>
+                                    <tr>
+                                        <th scope="col">Variety</th>
+                                        <th scope="col">Deficiency</th>
+                                        <th scope="col">Indang</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Phosphorus</td>
+                                        <td id = 'indang_rphos_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Potassium</td>
+                                        <td id ='indang_rpot_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Calcium</td>
+                                        <td id = 'indang_rcal_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Boron</td>
+                                        <td id = 'indang_rbo_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Iron</td>
+                                        <td id ='indang_rir_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Magnesium</td>
+                                        <td id = 'indang_rmag_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Nitrogen</td>
+                                        <td id = 'indang_rnit_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Robusta</th>
+                                        <td>Zinc</td>
+                                        <td id = 'indang_rzinc_table'>0</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Total Liberica Graph-->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Total Liberica Deficiencies &nbsp;&nbsp;<small id="liberica-date-label"></small></h3>
+                                <div class="box-tools pull-right">
+                                    <div class="dropdown">
+                                        <button class="btn btn-box-tool dropdown-toggle" type="button" id="dropdown-liberica" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <i class="fa fa-bars" aria-hidden="true"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu" aria-labelledby="dropdown">
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Date:</label>
+                                                    <input type="text" class="date form-control" id="liberica-date">
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Mode:</label>
+                                                    <select id="liberica-mode" class="form-control">
+                                                        <option value="day">Day</option>
+                                                        <option value="month">Month</option>
+                                                        <option value="year">Year</option>
+                                                    </select>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="liberica-graph"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Total Liberica Table -->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table class="table table-bordered table-striped mb-0">
+                                  <thead>
+                                    <tr>
+                                        <th scope="col">Variety</th>
+                                        <th scope="col">Deficiency</th>
+                                        <th scope="col">Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <th scope="row">Liberica</th>
+                                        <td>Phosphorus</td>
+                                        <td id ='total_lphos_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Liberica</th>
+                                        <td>Nitrogen</td>
+                                        <td id = 'total_lnit_table'>0</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Indang Liberica Graph-->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Liberica Nutritional Deficiencies in Indang, Cavite &nbsp;&nbsp;<small id="indangliberica-date-label"></small></h3>
+                                <div class="box-tools pull-right">
+                                    <div class="dropdown">
+                                        <button class="btn btn-box-tool dropdown-toggle" type="button" id="dropdown-indangliberica" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <i class="fa fa-bars" aria-hidden="true"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu" aria-labelledby="dropdown">
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Date:</label>
+                                                    <input type="text" class="date form-control" id="indangliberica-date">
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Mode:</label>
+                                                    <select id="indangliberica-mode" class="form-control">
+                                                        <option value="day">Day</option>
+                                                        <option value="month">Month</option>
+                                                        <option value="year">Year</option>
+                                                    </select>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="indangliberica-graph"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Indang Liberica Table -->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table class="table table-bordered table-striped mb-0">
+                                  <thead>
+                                    <tr>
+                                        <th scope="col">Variety</th>
+                                        <th scope="col">Deficiency</th>
+                                        <th scope="col">Indang</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <th scope="row">Liberica</th>
+                                        <td>Phosphorus</td>
+                                        <td id ='indang_lphos_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Liberica</th>
+                                        <td>Nitrogen</td>
+                                        <td id = 'indang_lnit_table'>0</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Total Excelsa Graph-->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Total Excelsa Deficiencies &nbsp;&nbsp;<small id="excela-date-label"></small></h3>
+                                <div class="box-tools pull-right">
+                                    <div class="dropdown">
+                                        <button class="btn btn-box-tool dropdown-toggle" type="button" id="dropdown-excela" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <i class="fa fa-bars" aria-hidden="true"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu" aria-labelledby="dropdown">
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Date:</label>
+                                                    <input type="text" class="date form-control" id="excela-date">
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Mode:</label>
+                                                    <select id="excela-mode" class="form-control">
+                                                        <option value="day">Day</option>
+                                                        <option value="month">Month</option>
+                                                        <option value="year">Year</option>
+                                                    </select>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="excela-graph"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Total Excelsa Table -->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table class="table table-bordered table-striped mb-0">
+                                  <thead>
+                                    <tr>
+                                        <th scope="col">Variety</th>
+                                        <th scope="col">Deficiency</th>
+                                        <th scope="col">Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <th scope="row">Excelsa</th>
+                                        <td>Phosphorus</td>
+                                        <td id = 'total_ephos_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Excelsa</th>
+                                        <td>Potassium</td>
+                                        <td id = 'total_epot_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Excelsa</th>
+                                        <td>Calcium</td>
+                                        <td id = 'total_ecal_table'>0</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Amadeo Excelsa Graph-->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Excelsa Nutritional Deficiencies in Amadeo, Cavite &nbsp;&nbsp;<small id="amadeoexcela-date-label"></small></h3>
+                                <div class="box-tools pull-right">
+                                    <div class="dropdown">
+                                        <button class="btn btn-box-tool dropdown-toggle" type="button" id="dropdown-amadeoexcela" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <i class="fa fa-bars" aria-hidden="true"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu" aria-labelledby="dropdown">
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Date:</label>
+                                                    <input type="text" class="date form-control" id="amadeoexcela-date">
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="form-group">
+                                                    <label>Mode:</label>
+                                                    <select id="amadeoexcela-mode" class="form-control">
+                                                        <option value="day">Day</option>
+                                                        <option value="month">Month</option>
+                                                        <option value="year">Year</option>
+                                                    </select>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="amadeoexcela-graph"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Amadeo Excelsa Table -->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table class="table table-bordered table-striped mb-0">
+                                  <thead>
+                                    <tr>
+                                        <th scope="col">Variety</th>
+                                        <th scope="col">Deficiency</th>
+                                        <th scope="col">Amadeo</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <th scope="row">Excelsa</th>
+                                        <td>Phosphorus</td>
+                                        <td id = 'amadeo_ephos_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Excelsa</th>
+                                        <td>Potassium</td>
+                                        <td id = 'amadeo_epot_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Excelsa</th>
+                                        <td>Calcium</td>
+                                        <td id = 'amadeo_ecal_table'>0</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Total Amadeo Graph-->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Total Nutritional Deficiencies in Amadeo, Cavite &nbsp;&nbsp;<small id="amadeo-date-label"></small></h3>
+                                <div class="box-tools pull-right">
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="amadeo-graph"></div>
+
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Total Amadeo Table -->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table class="table table-bordered table-striped mb-0">
+                                  <thead>
+                                    <tr>
+                                        <th scope="col">Location</th>
+                                        <th scope="col">Deficiency</th>
+                                        <th scope="col">Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <th scope="row">Amadeo</th>
+                                        <td>Phosphorus</td>
+                                        <td id = 'amadeo_phos_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Amadeo</th>
+                                        <td>Potassium</td>
+                                        <td id = 'amadeo_pot_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Amadeo</th>
+                                        <td>Calcium</td>
+                                        <td id = 'amadeo_cal_table'>0</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Total Indang Graph-->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Total Nutritional Deficiencies in Indang, Cavite &nbsp;&nbsp;<small id="indang-date-label"></small></h3>
+                                <div class="box-tools pull-right">
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="indang-graph"></div>
+
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Total Indang Table -->
+                <div class="col-md-6">
+                        <div class="box box-default">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table class="table table-bordered table-striped mb-0">
+                                  <thead>
+                                    <tr>
+                                        <th scope="col">Location</th>
+                                        <th scope="col">Deficiency</th>
+                                        <th scope="col">Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <th scope="row">Indang</th>
+                                        <td>Phosphorus</td>
+                                        <td id = 'indang_phos_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Indang</th>
+                                        <td>Potassium</td>
+                                        <td id = 'indang_pot_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Indang</th>
+                                        <td>Calcium</td>
+                                        <td id = 'indang_cal_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Indang</th>
+                                        <td>Boron</td>
+                                        <td id = 'indang_bo_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Indang</th>
+                                        <td>Iron</td>
+                                        <td id = 'indang_ir_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Indang</th>
+                                        <td>Magnesium</td>
+                                        <td id = 'indang_mag_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Indang</th>
+                                        <td>Nitrogen</td>
+                                        <td id = 'indang_nit_table'>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Indang</th>
+                                        <td>Zinc</td>
+                                        <td id = 'indang_zinc_table'>0</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+
+
+
+            </section>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
