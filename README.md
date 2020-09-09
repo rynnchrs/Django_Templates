@@ -9,4 +9,6 @@ Installation:
 3. Run the webserver using "python3 manage.py runserver".
 
 Sample Screenshots:
+
+
 ![Optional Text](../master/ReadmeImages/1.png)
