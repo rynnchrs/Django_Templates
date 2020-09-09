@@ -8,5 +8,5 @@ Installation:
 2. Install necessary packages "pip3 install -r requirements.txt".
 3. Run the webserver using "python3 manage.py runserver".
 
-
-![stack Overflow](http://lmsotfy.com/so.png)
+Sample Screenshots:
+![Optional Text](../master/ReadmeImages/1.png)
