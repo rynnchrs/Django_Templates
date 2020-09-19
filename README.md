@@ -23,19 +23,19 @@ To install using `pip`:
 Sample Screenshots
 ==================
 
-**Real Time Data:
+**Real Time Data:**
 
 
 ![Optional Text](../master/ReadmeImages/1.png)
 
-**Table:
+**Table:**
 ![Optional Text](../master/ReadmeImages/2.png)
 
-**Line Graph:
+**Line Graph:**
 ![Optional Text](../master/ReadmeImages/3.png)
 
-**Bar Graph and Table:
+**Bar Graph and Table:**
 ![Optional Text](../master/ReadmeImages/4.png)
 
-**Pie Graph and Table:
+**Pie Graph and Table:**
 ![Optional Text](../master/ReadmeImages/5.png)
