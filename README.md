@@ -18,7 +18,7 @@ To install using `pip`:
     
 3. Run the webserver using 
 
-    `python3 manage.py runserver'
+    `python3 manage.py runserver`
 
 Sample Screenshots
 ==================
