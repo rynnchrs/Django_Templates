@@ -17,6 +17,7 @@ To install using `pip`:
     $ pip3 install requirements.txt
     
 3. Run the webserver using 
+
     `python3 manage.py runserver'
 
 Sample Screenshots
